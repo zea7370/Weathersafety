@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ClimaGuard — Results</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-dark">
+
+  <div class="topbar">
+    <div class="brand-small">ClimaGuard</div>
+    <a href="{{ url_for('search_page') }}" class="btn-ghost">← New Search</a> </div>
+
+  <main class="container">
+
+    {% if error %}
+      <div class="glass error">
+        <h2>Error</h2>
+        <p>{{ error }}</p>
+      </div>
+
+    {% else %}
+
+    <section class="glass grid-top">
+
+      <div class="summary">
+        <h2>{{ weather.city }}</h2>
+        <div class="temp">{{ weather.temp }}°C</div>
+        <div class="desc">{{ weather.desc }}</div>
+
+        <div class="meta">
+          <div><strong>Safety:</strong> <span class="accent">{{ safety.level }}</span></div>
+          <div><strong>Advice:</strong> {{ safety.message }}</div>
+          <div><strong>Hydration:</strong> {{ safety.hydration }}</div>
+        </div>
+
+        {% if aqi %}
+        <div class="aqi-card">
+          <div class="aqi-left">
+            <div class="aqi-label">AQI</div>
+            <div class="aqi-value">{{ aqi.aqi }}</div>
+          </div>
+
+          <div class="aqi-right">
+            <div>PM2.5: {{ aqi.pm2_5 }}</div>
+            <div>PM10: {{ aqi.pm10 }}</div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="map-card" id="map-card">
+        <div id="map" style="height:320px;border-radius:10px;"></div>
+      </div>
+
+    </section>
+
+    <section class="glass forecast">
+      <h3>7-Day Snapshot</h3>
+      <div class="forecast-grid">
+        {% for f in forecast %}
+          <div class="day">
+            <div class="d-date">{{ f.date }}</div>
+            <div class="d-temp">{{ f.temp }}°C</div>
+            <div class="d-desc">{{ f.description }}</div>
+            <div class="d-hum">💧 {{ f.humidity }}%</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="glass charts">
+      <h3>Analytics</h3>
+
+      <div class="chart-row">
+
+        <div class="chart-item">
+          <canvas id="tempChart"></canvas>
+        </div>
+
+        <div class="chart-item">
+          <canvas id="humChart"></canvas>
+        </div>
+
+      </div>
+
+      <div class="chart-row">
+
+        <div class="chart-item pie-chart-item">
+          <canvas id="condPie"></canvas>
+        </div>
+
+      </div>
+    </section>
+
+    {% endif %}
+
+  </main>
+
+  <footer class="foot">ClimaGuard • Glass + Dark • Built for demo</footer>
+
+  {% if weather %}
+  <script>
+    window.__DATA__ = {
+      weather: {{ weather|tojson }},
+      forecast: {{ forecast|tojson }},
+      aqi: {{ aqi|tojson }},
+      openweather_key: "{{ openweather_key }}"
+    };
+  </script>
+  {% endif %}
+
+  <script src="{{ url_for('static', filename='chart.js') }}"></script>
+  <script src="{{ url_for('static', filename='map.js') }}"></script>
+
+</body>
+</html>

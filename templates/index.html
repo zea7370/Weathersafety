@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ClimaGuard — Weather Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="bg-dark">
+  <div class="topbar">
+    <a href="{{ url_for('welcome') }}" class="brand-small">ClimaGuard</a>
+    <a href="{{ url_for('welcome') }}" class="btn-ghost">← Welcome Home</a>
+  </div>
+  <main class="center" style="min-height: 80vh;"> <div class="glass card-lg">
+      <h1 class="brand">ClimaGuard</h1>
+      <p class="muted">Enter a city to get real-time weather, AQI & safety advisories</p>
+
+      <form action="{{ url_for('results') }}" method="POST" class="search-form">
+        <input name="city" placeholder="Enter city name (e.g., New Delhi)" required>
+        <button type="submit" class="btn-accent">Check Safety</button>
+      </form>
+
+      {% if history %}
+      <div class="history">
+        <h4>Recent Searches</h4>
+        <ul>
+          {% for row in history %}
+            <li>
+                <span>{{ row[0] }} • **{{ row[1] }}°C** • {{ row[2].split(" ")[0] }}</span>
+                <small>{{ row[3] }}</small>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="small-muted">
+        Built with Flask • OpenWeatherMap • Leaflet • Chart.js
+      </div>
+    </div>
+
+    <footer class="foot">© 2025 ClimaGuard — Demo Project</footer>
+  </main>
+</body>
+</html>
